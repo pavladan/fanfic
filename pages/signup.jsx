@@ -15,7 +15,6 @@ const SignupPage = () => {
   }, [user]);
 
   const handleSubmit = async (e) => {
-      console.log(e.currentTarget.email.value)
     e.preventDefault();
     const body = {
       email: e.currentTarget.email.value,
