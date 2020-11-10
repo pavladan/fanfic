@@ -9,11 +9,10 @@ const handler = nextConnect();
 
 handler.use(middleware); // see how we're reusing our middleware
 
-console.log('text1');
 
 // POST /api/users
 handler.post(async (req, res) => {
-    console.log('text');
+
   const { name, password } = req.body;
   const email = normalizeEmail(req.body.email); // this is to handle things like jane.doe@gmail.com and janedoe@gmail.com being the same
   if (!isEmail(email)) {
@@ -25,8 +24,9 @@ handler.post(async (req, res) => {
     return;
   }
   // check if email existed
+  
   if ((await req.db.collection('users').countDocuments({ email })) > 0) {
-    res.status(403).send('The email has already been used.');
+   return res.status(403).send('The email has already been used.');
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await req.db

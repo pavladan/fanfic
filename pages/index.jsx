@@ -26,14 +26,7 @@ const IndexPage = () => {
         </h2>
         <p>Have a wonderful day.</p>
       </div>
-      <div>
-        <h3>
-          All posts from the Web
-          {' '}
-          <span role="img" aria-label="Earth">🌎</span>
-        </h3>
 
-      </div>
     </>
   );
 };

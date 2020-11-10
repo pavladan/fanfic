@@ -3,13 +3,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useUser } from '../lib/hooks';
+import { Button, Form } from 'react-bootstrap';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const LoginPage = () => {
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState('');
   const [user, { mutate }] = useUser();
   useEffect(() => {
-    // redirect to home if user is authenticated
     if (user) router.replace('/');
   }, [user]);
 
@@ -37,30 +38,33 @@ const LoginPage = () => {
       <Head>
         <title>Sign in</title>
       </Head>
-      <h2>Sign in</h2>
-      <form onSubmit={onSubmit}>
-        {errorMsg ? <p style={{ color: 'red' }}>{errorMsg}</p> : null}
-        <label htmlFor="email">
-          <input
-            id="email"
-            type="email"
-            name="email"
-            placeholder="Email address"
-          />
-        </label>
-        <label htmlFor="password">
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Password"
-          />
-        </label>
-        <button type="submit">Sign in</button>
-        <Link href="/forgetpassword">
+      <div className="forms-wrapper">
+
+
+        <Form onSubmit={onSubmit}>
+          {errorMsg ? <p style={{ color: 'red' }}>{errorMsg}</p> : null}
+          <Form.Group>
+            <Form.Label>Email address</Form.Label>
+            <Form.Control id="email"
+              name="email"
+              type="email"
+              placeholder="Email address" />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Password</Form.Label>
+            <Form.Control id="password"
+              type="password"
+              name="password"
+              placeholder="Password" />
+          </Form.Group>
+
+          <Button variant="primary" type="submit">Sign In</Button>
+          {/* <Link href="/forgetpassword">
           <a>Forget password</a>
-        </Link>
-      </form>
+        </Link> */}
+        </Form>
+      </div>
     </>
   );
 };

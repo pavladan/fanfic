@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useCurrentUser } from '../lib/hooks';
-import { Navbar, Container, Nav, NavLink } from 'react-bootstrap';
+import { Navbar, Container, Nav, InputGroup, FormControl } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default ({ children }) => {
@@ -17,57 +17,37 @@ export default ({ children }) => {
         <>
             <style jsx global>
                 {`
-                .navbar-expand-lg>.container{
-                    display:flex;
-                    justify-content:space-between;
-                }
-                .mr-auto{
-                    margin-left:auto;
-                    margin-right:0 !important;
-                    align-items:center;
-                }
-                .links{
-                    padding:5px;
-                }
-    
-          body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-              'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-              'Helvetica Neue', sans-serif;
-          }
           h2 {
             color: #333;
             text-align: center;
           }
-          label {
-            display: flex;
-            margin-bottom: 0.5rem;
-            align-items: center;
-            width: 100%;
-          }
-          form {
-            margin-bottom: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-          }
-          input,
-          textarea {
-            font-family: monospace;
-            flex: 1 1 0%;
-            margin-left: 0.5rem;
-            box-shadow: none;
-            width: 100%;
-            color: #000;
-            background-color: transparent;
-            border: 1px solid #d8d8d8;
-            border-radius: 5px;
-            outline: 0px;
-            padding: 10px 25px;
-          }
+        //   label {
+        //     display: flex;
+        //     margin-bottom: 0.5rem;
+        //     align-items: center;
+        //     width: 100%;
+        //   }
+        //   form {
+        //     margin-bottom: 0.5rem;
+        //     display: flex;
+        //     flex-direction: column;
+        //     justify-content: center;
+        //     align-items: center;
+        //   }
+        //   input,
+        //   textarea {
+        //     font-family: monospace;
+        //     flex: 1 1 0%;
+        //     margin-left: 0.5rem;
+        //     box-shadow: none;
+        //     width: 100%;
+        //     color: #000;
+        //     background-color: transparent;
+        //     border: 1px solid #d8d8d8;
+        //     border-radius: 5px;
+        //     outline: 0px;
+        //     padding: 10px 25px;
+        //   }
           button {
             display: block;
             margin-bottom: 0.5rem;
@@ -80,27 +60,37 @@ export default ({ children }) => {
             padding: 10px 25px;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
           }
-          button:hover,
-          button:active {
-            transform: translate3d(0px, -1px, 0px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+          .forms-wrapper{
+              width:60%;
+              margin-left:auto;
+              margin-right:auto;
           }
-          header {
-            border-bottom: 1px solid #d8d8d8;
+          .genre-element{
+              width:140px;
           }
+  
         
-          main {
-            padding: 1rem;
-            max-width: 1040px;
-            margin: 0 auto;
+
+       
+          .log-wrapper{
+              display:flex;
+              align-items:center;
           }
-          footer {
-            text-align: center;
-            font-size: 0.8rem;
-            margin-top: 1rem;
-            padding: 3rem;
-            color: #888;
+         
+          .mb-3{
+              width:40%;
+              margin-bottom:0!important;
           }
+        //   .form-control{
+        //     border:none;
+        //     border-radius: .25rem;
+        //     max-width: 400px;
+        //     text-align:center;
+        //   }
+          .navbar{
+            margin-bottom: 1rem;
+          }
+     
         `}
             </style>
             <>
@@ -138,30 +128,45 @@ export default ({ children }) => {
                             </Link>
 
                         </Nav>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                                placeholder="Search"
+                                aria-label="Search"
+                                aria-describedby="basic-addon2" />
+
+                        </InputGroup>
+
 
                         {!user ? (
-                            <>
-                                <Nav className="mr-auto">
+                            <Nav >
+                                <div className="log-wrapper">
+
                                     <Link href="/login">
                                         <Nav.Link href="#home">Sign in </Nav.Link>
                                     </Link>
                                     <Link href="/signup">
                                         <Nav.Link href="#home">Sign up</Nav.Link>
                                     </Link>
+                                </div>
 
 
-                                </Nav>
-                            </>
+                            </Nav>
                         ) : (
-                                <>
-                                    <Nav>
-                                        <Link href="/user/[userId]" as={`/user/${user._id}`}>
-                                            <a>Profile</a>
+
+                                <Nav >
+                                    <div className="log-wrapper">
+                                        <Link href="/profile/profile" as={`/profile/${user._id}`}>
+                                            <Nav.Link href="#home">Profil</Nav.Link>
                                         </Link>
+
                                         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                                        <a tabIndex={0} role="button" onClick={handleLogout}> Logout </a>
-                                    </Nav>
-                                </>
+                                        <Link href="/">
+                                            <Nav.Link onClick={handleLogout} href="#home"> Logout</Nav.Link>
+                                        </Link>
+
+                                    </div>
+                                </Nav>
+
                             )}
                     </Container>
                 </Navbar>

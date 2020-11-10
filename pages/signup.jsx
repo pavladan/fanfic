@@ -3,14 +3,13 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { useUser } from '../lib/hooks';
 import axios from 'axios';
+import { Button, Form } from 'react-bootstrap';
 
 const SignupPage = () => {
   const [user, { mutate }] = useUser();
   const [errorMsg, setErrorMsg] = useState('');
-  
-  // call whenever user changes (ex. right after signing up successfully)
+
   useEffect(() => {
-    // redirect to home if user is authenticated
     if (user) Router.replace('/');
   }, [user]);
 
@@ -22,15 +21,16 @@ const SignupPage = () => {
       password: e.currentTarget.password.value,
     };
     console.log(body);
-    const res = await axios.post('http://localhost:3000/api/users', body);
-    console.log(res)
-    if (res.status === 201) {
-      const userObj = await res.json();
-      // writing our user object to the state
-      mutate(userObj);
-    } else {
-      setErrorMsg(await res.text());
+    try {
+      const res = await axios.post("/api/users", body);
+      if (res.status === 201) {
+        const userObj = await res.data.user;
+        mutate(userObj);
+      }
+    } catch (err) {
+      setErrorMsg(err.response.data);
     }
+
   };
 
   return (
@@ -38,36 +38,35 @@ const SignupPage = () => {
       <Head>
         <title>Sign up</title>
       </Head>
-      <div>
-        <h2>Sign up</h2>
-        <form onSubmit={handleSubmit}>
+      <div className="forms-wrapper">
+        <Form onSubmit={handleSubmit} >
           {errorMsg ? <p style={{ color: 'red' }}>{errorMsg}</p> : null}
-          <label htmlFor="name">
-            <input
-              id="name"
+          <Form.Group>
+            <Form.Label>Name</Form.Label>
+            <Form.Control id="name"
               name="name"
               type="text"
-              placeholder="Your name"
-            />
-          </label>
-          <label htmlFor="email">
-            <input
-              id="email"
+              placeholder="Your name" />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Email</Form.Label>
+            <Form.Control id="email"
               name="email"
               type="email"
-              placeholder="Email address"
-            />
-          </label>
-          <label htmlFor="password">
-            <input
-              id="password"
+              placeholder="Email address" />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Password</Form.Label>
+            <Form.Control id="password"
               name="password"
               type="password"
-              placeholder="Create a password"
-            />
-          </label>
-          <button type="submit">Sign up</button>
-        </form>
+              placeholder="Create a password" />
+          </Form.Group>
+
+          <Button variant="primary" type="submit">Sign Up</Button>
+        </Form>
       </div>
     </>
   );
