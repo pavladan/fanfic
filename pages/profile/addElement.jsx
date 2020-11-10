@@ -11,8 +11,7 @@ const AddElement = () => {
         e.preventDefault();
         const body = {
             nameFanfic: e.currentTarget.nameFanfic.value,
-            desctiption: e.currentTarget.desctiption.value,
-            password: e.currentTarget.password.value,
+            description: e.currentTarget.description?.value,
         };
         console.log(body);
         try {
@@ -35,13 +34,13 @@ const AddElement = () => {
                 <Form.Group>
                     <Form.Label>Name</Form.Label>
                     <Form.Control type="nameFanfic" 
-                        name="nameFanfic" placeholder="Name" />
+                        name="nameFanfic" placeholder="Name" required/>
                 </Form.Group>
 
-                <Form.Group controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Desctiption</Form.Label>
+                <Form.Group controlId="exampleForm.Description">
+                    <Form.Label>Description</Form.Label>
                     <Form.Control as="textarea" placeholder="Description"
-                       rows={3} />
+                       rows={3}/>
                 </Form.Group>
 
                 <Form.Group as={Row}>
@@ -58,10 +57,10 @@ const AddElement = () => {
                         ))}
                     </Col>
                 </Form.Group>
-                <Form.Group controlId="exampleForm.ControlTextarea1">
+                <Form.Group controlId="exampleForm.Text">
                     <Form.Label>Text</Form.Label>
                     <Form.Control as="textarea" rows={3} placeholder="Text"
-                        name="text" />
+                        name="text" required/>
                 </Form.Group>
                 <Button variant="primary" type="submit">Submit</Button>
             </Form>
