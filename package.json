@@ -25,6 +25,7 @@
     "react": "^16.13.1",
     "react-bootstrap": "^1.4.0",
     "react-dom": "^16.13.1",
+    "react-markdown": "^5.0.2",
     "reactstrap": "^8.6.0",
     "swr": "^0.3.7",
     "validator": "^13.1.17"
