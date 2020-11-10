@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const LoginPage = () => {
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState('');
-  const [user, { mutate }] = useUser();
+  const [user,  mutate ] = useUser();
   useEffect(() => {
     if (user) router.replace('/');
   }, [user]);

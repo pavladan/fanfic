@@ -1,5 +1,7 @@
 import React,{useState} from "react";
 import { Form, Col, Button, Row } from "react-bootstrap";
+import axios from 'axios'
+import { useRouter } from 'next/router'
 
 const genre = [
   "Hurt",
@@ -23,6 +25,8 @@ const genre = [
 
 const AddElement = () => {
 	const [genres,setGenres] = useState(genre.map(e=>({name:e,value:false})));
+  const [errorMsg, setErrorMsg] = useState();
+	const router = useRouter()
 
   const handleSubmitFanFic = async (e) => {
     e.preventDefault();
@@ -33,21 +37,20 @@ const AddElement = () => {
 			genres: selectedGenres,
       text: e.currentTarget.text.value,
 		};
-    console.log(body);
-    // try {
-    //     const res = await axios.post("/api/users", body);
-    //     if (res.status === 201) {
-    //         const userObj = await res.data.user;
-    //         mutate(userObj);
-    //     }
-    // } catch (err) {
-    //     setErrorMsg(err.response.data);
-    // }
+    try {
+        const res = await axios.post("/api/user/posts", body);
+        if (res.status === 201) {
+						router.back();
+        }
+    } catch (err) {
+        setErrorMsg(err.response.data);
+    }
   };
 
   return (
     <div className="forms-wrapper">
       <Form onSubmit={handleSubmitFanFic}>
+			{errorMsg ? <p style={{ color: 'red' }}>{errorMsg}</p> : null}
         <Form.Group>
           <Form.Label>Name</Form.Label>
           <Form.Control

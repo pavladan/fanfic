@@ -6,7 +6,7 @@ import axios from 'axios';
 import { Button, Form } from 'react-bootstrap';
 
 const SignupPage = () => {
-  const [user, { mutate }] = useUser();
+  const [user,  mutate ] = useUser();
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
@@ -20,7 +20,6 @@ const SignupPage = () => {
       name: e.currentTarget.name.value,
       password: e.currentTarget.password.value,
     };
-    console.log(body);
     try {
       const res = await axios.post("/api/users", body);
       if (res.status === 201) {

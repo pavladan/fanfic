@@ -1,20 +1,33 @@
-import React from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useUser } from '../../lib/hooks';
-import { ButtonToolbar, ButtonGroup, Button, Table, Form } from 'react-bootstrap';
+import React, { useState } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useUserPosts, useUser } from "../../lib/hooks";
+import {
+  ButtonToolbar,
+  ButtonGroup,
+  Button,
+  Table,
+  Form,
+} from "react-bootstrap";
+import axios from "axios";
 
 const ProfilePage = () => {
   const [user] = useUser();
-  const {
-    name, email, bio, profilePicture,
-  } = user || {};
+  const [posts, mutatePosts] = useUserPosts();
+  const [checkedPosts, setCheckedPosts] = useState([]);
+  const { name, email, bio, profilePicture } = user || {};
 
-  if (!user) {
-    return (
-      <p>Please sign in</p>
-    );
+  if (!user || !posts) {
+    return <p>loading</p>;
   }
+
+  const handleDelete = async () => {
+    const res = await axios.delete("/api/user/posts", {
+      data: { id: checkedPosts },
+    });
+    await mutatePosts(res.posts);
+    setCheckedPosts([]);
+  };
   return (
     <>
       <style jsx>
@@ -65,9 +78,7 @@ const ProfilePage = () => {
           {/* Bio
           <p>{bio}</p> */}
           Email
-          <p>
-            {email}
-          </p>
+          <p>{email}</p>
         </section>
       </div>
 
@@ -75,44 +86,76 @@ const ProfilePage = () => {
         <ButtonToolbar aria-label="Toolbar with button groups">
           <ButtonGroup className="mr-2" aria-label="First group">
             <Link href="/profile/addElement">
-              <Button variant="secondary">Create new element</Button>
+              <Button>Create new element</Button>
             </Link>
+            <Button
+              disabled={checkedPosts.length === 0}
+              variant="secondary"
+              onClick={handleDelete}
+            >
+              Delete selected
+            </Button>
           </ButtonGroup>
         </ButtonToolbar>
-
-
       </div>
       <div className="users">
         <Table striped bordered hover variant="dark">
-
           <thead className="users">
             <tr>
-              <th><Form.Check type="checkbox" onChange="" checked="" /> </th>
+              <th>
+                <Form.Check
+                  type="checkbox"
+                  checked={
+                    posts.length > 0 &&
+                    posts.every((post) =>
+                      checkedPosts.some((checkId) => post._id === checkId)
+                    )
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setCheckedPosts(posts.map((post) => post._id));
+                    } else {
+                      setCheckedPosts([]);
+                    }
+                  }}
+                />
+              </th>
               <th>#</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Registration data</th>
-              <th>Last login </th>
-              <th>Status</th>
+              <th>Description</th>
+              <th>Genres</th>
+              <th>Text</th>
             </tr>
           </thead>
           <tbody>
-            {() => {
+            {posts.map((post, index) => {
               return (
-                <tr key={val.id}>
-                  <td> <Form.Check checked="" onChange="" type="checkbox" /> </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                <tr key={post._id}>
+                  <td>
+                    <Form.Check
+                      checked={checkedPosts.some((e) => e === post._id)}
+                      type="checkbox"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setCheckedPosts((old) => [...old, post._id]);
+                        } else {
+                          setCheckedPosts((old) =>
+                            old.filter((e) => e !== post._id)
+                          );
+                        }
+                      }}
+                    />
+                  </td>
+                  <td>{index + 1}</td>
+                  <td>{post.name}</td>
+                  <td>{post.description}</td>
+                  <td>{post.genres.join(", ")}</td>
+                  <td>{post.text}</td>
                 </tr>
-              )
-            }}
+              );
+            })}
           </tbody>
         </Table>
-
       </div>
     </>
   );

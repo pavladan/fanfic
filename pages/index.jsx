@@ -1,8 +1,8 @@
 import React from 'react';
-import { useCurrentUser } from '../lib/hooks';
+import { useUser } from '../lib/hooks';
 
 const IndexPage = () => {
-  const [user] = useCurrentUser();
+  const [user] = useUser();
 
   return (
     <>

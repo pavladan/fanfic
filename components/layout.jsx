@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useCurrentUser } from "../lib/hooks";
+import { useUser } from "../lib/hooks";
 import {
   Navbar,
   Container,
@@ -12,7 +12,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Layout = ({ children }) => {
-  const [user, { mutate }] = useCurrentUser();
+  const [user,  mutate ] = useUser();
   const handleLogout = async () => {
     await fetch("/api/auth", {
       method: "DELETE",
