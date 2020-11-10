@@ -54,7 +54,6 @@ const AddElement = () => {
                                 label={val}
                                 name={val}
                                 id={val}
-                                onChange={}
                             />
                         ))}
                     </Col>

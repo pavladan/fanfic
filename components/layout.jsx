@@ -155,7 +155,7 @@ export default ({ children }) => {
 
                                 <Nav >
                                     <div className="log-wrapper">
-                                        <Link href="/profile/profile" as={`/profile/${user._id}`}>
+                                        <Link href="/profile">
                                             <Nav.Link href="#home">Profil</Nav.Link>
                                         </Link>
 
