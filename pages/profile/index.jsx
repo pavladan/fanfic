@@ -85,7 +85,7 @@ const ProfilePage = () => {
       <div>
         <ButtonToolbar aria-label="Toolbar with button groups">
           <ButtonGroup className="mr-2" aria-label="First group">
-            <Link href="/profile/addElement">
+            <Link href="/profile/post">
               <Button>Create new element</Button>
             </Link>
             <Button
@@ -130,28 +130,31 @@ const ProfilePage = () => {
           <tbody>
             {posts.map((post, index) => {
               return (
-                <tr key={post._id}>
-                  <td>
-                    <Form.Check
-                      checked={checkedPosts.some((e) => e === post._id)}
-                      type="checkbox"
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setCheckedPosts((old) => [...old, post._id]);
-                        } else {
-                          setCheckedPosts((old) =>
-                            old.filter((e) => e !== post._id)
-                          );
-                        }
-                      }}
-                    />
-                  </td>
-                  <td>{index + 1}</td>
-                  <td>{post.name}</td>
-                  <td>{post.description}</td>
-                  <td>{post.genres.join(", ")}</td>
-                  <td>{post.text}</td>
-                </tr>
+                <Link href={`/profile/post?id=${post._id}`} key={post._id}>
+                  <tr>
+                    <td>
+                      <Form.Check
+                        checked={checkedPosts.some((e) => e === post._id)}
+                        type="checkbox"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCheckedPosts((old) => [...old, post._id]);
+                          } else {
+                            setCheckedPosts((old) =>
+                              old.filter((e) => e !== post._id)
+                            );
+                          }
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </td>
+                    <td>{index + 1}</td>
+                    <td>{post.name}</td>
+                    <td>{post.description}</td>
+                    <td>{post.genres.join(", ")}</td>
+                    <td>{post.text}</td>
+                  </tr>
+                </Link>
               );
             })}
           </tbody>

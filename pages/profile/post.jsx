@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Form, Col, Button, Row, Tabs,Tab } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Form, Col, Button, Row, Tabs, Tab } from "react-bootstrap";
 import axios from "axios";
 import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
@@ -24,42 +24,89 @@ const genre = [
   "Фэнтези",
 ];
 
-const AddElement = () => {
-  const [genres, setGenres] = useState(
+const Post = () => {
+  const [nameForm, setNameForm] = useState("");
+  const [descriptionForm, setDescriptionForm] = useState("");
+  const [genresForm, setGenresForm] = useState(
     genre.map((e) => ({ name: e, value: false }))
   );
-  const [errorMsg, setErrorMsg] = useState();
   const [textForm, setTextForm] = useState("");
+
+  const [errorMsg, setErrorMsg] = useState();
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
+  const postId = router.query.id;
+
+  useEffect(() => {
+    if (postId) {
+      setLoading(true);
+      axios
+        .get("/api/user/posts", {
+          params: {
+            id: postId,
+          },
+        })
+        .then((res) => {
+          const post = res.data.post;
+          setNameForm(post.name);
+          setDescriptionForm(post.description);
+          setGenresForm((old) =>
+            old.map((e) => {
+              if (post.genres.some((g) => g === e.name)) {
+                return { ...e, value: true };
+              }
+              return e;
+            })
+          );
+          setTextForm(post.text);
+          setLoading(false);
+        })
+        .catch(() => {
+					setLoading(false);
+					router.replace(router.pathname)
+        });
+    }
+  }, [postId]);
 
   const handleSubmitFanFic = async (e) => {
     e.preventDefault();
-    const selectedGenres = genres
+    const selectedGenres = genresForm
       .filter((e) => e.value === true)
       .map((e) => e.name);
     const body = {
-      name: e.currentTarget.nameFanfic.value,
-      description: e.currentTarget.description.value,
+      name: nameForm,
+      description: descriptionForm,
       genres: selectedGenres,
       text: textForm,
     };
     try {
-      const res = await axios.post("/api/user/posts", body);
+      let res;
+      if (postId) {
+        res = await axios.put("/api/user/posts", { ...body, id: postId });
+      } else {
+        res = await axios.post("/api/user/posts", body);
+      }
       if (res.status === 201) {
-        router.back();
+        router.replace('/profile');
       }
     } catch (err) {
       setErrorMsg(err.response.data);
     }
-  };
-
+	};
+	
   return (
     <div className="forms-wrapper">
       <Form onSubmit={handleSubmitFanFic}>
         {errorMsg ? <p style={{ color: "red" }}>{errorMsg}</p> : null}
         <Form.Group>
           <Form.Label>Name</Form.Label>
-          <Form.Control name="nameFanfic" placeholder="Name" required />
+          <Form.Control
+            value={nameForm}
+            onChange={(e) => setNameForm(e.target.value)}
+            placeholder="Name"
+            required
+          />
         </Form.Group>
 
         <Form.Group controlId="exampleForm.Description">
@@ -67,7 +114,8 @@ const AddElement = () => {
           <Form.Control
             as="textarea"
             placeholder="Description"
-            name="description"
+            value={descriptionForm}
+            onChange={(e) => setDescriptionForm(e.target.value)}
             rows={3}
             required
           />
@@ -78,16 +126,16 @@ const AddElement = () => {
             Genre
           </Form.Label>
           <Col sm={10}>
-            {genres.map((val) => (
+            {genresForm.map((val, index) => (
               <Form.Check
-                key={val.name}
+                key={index}
                 className="genre-element"
                 inline
                 type="checkbox"
                 label={val.name}
-                value={val.value}
+                checked={val.value}
                 onChange={() =>
-                  setGenres((old) =>
+                  setGenresForm((old) =>
                     old.map((e) => {
                       if (e.name === val.name) {
                         return { ...e, value: !e.value };
@@ -106,7 +154,7 @@ const AddElement = () => {
             <Tab eventKey="Write" title="Write">
               <Form.Control
                 as="textarea"
-								rows={5}
+                rows={5}
                 placeholder="Text"
                 value={textForm}
                 onChange={(e) => setTextForm(e.currentTarget.value)}
@@ -126,4 +174,4 @@ const AddElement = () => {
   );
 };
 
-export default AddElement;
+export default Post;
