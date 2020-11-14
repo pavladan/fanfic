@@ -1,7 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useUser } from "../lib/hooks";
 import {
   Navbar,
   Container,
@@ -10,15 +9,49 @@ import {
   FormControl,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useUser } from "../lib/hooks";
 
 const Layout = ({ children }) => {
-  const [user,  mutate ] = useUser();
+	const { user, mutate } = useUser();
+
+  const [loading, setLoading] = useState(false);
+
   const handleLogout = async () => {
+    setLoading(true);
     await fetch("/api/auth", {
       method: "DELETE",
     });
     mutate(null);
+    setLoading(false);
   };
+  const nav = !user ? (
+    <Nav>
+      <div className="log-wrapper">
+        <Link href="/login">
+          <Nav.Link href="#home">Sign in </Nav.Link>
+        </Link>
+        <Link href="/signup">
+          <Nav.Link href="#home">Sign up</Nav.Link>
+        </Link>
+      </div>
+    </Nav>
+  ) : (
+    <Nav>
+      <div className="log-wrapper">
+        <Link href="/profile">
+          <Nav.Link href="#home">Profil</Nav.Link>
+        </Link>
+
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <Link href="/">
+          <Nav.Link onClick={handleLogout} href="#home">
+            {" "}
+            Logout
+          </Nav.Link>
+        </Link>
+      </div>
+    </Nav>
+  );
   return (
     <>
       <style jsx global>
@@ -97,7 +130,6 @@ const Layout = ({ children }) => {
       </style>
       <>
         <Head>
-          <title>Next.js + MongoDB App</title>
           <meta
             key="viewport"
             name="viewport"
@@ -122,7 +154,7 @@ const Layout = ({ children }) => {
           <Container>
             <Nav id="responsive-navbar-nav">
               <Link href="/">
-                <Nav.Link href="#home">Next.js + MongoDB App</Nav.Link>
+                <Nav.Link href="#home">FAnfiK</Nav.Link>
               </Link>
             </Nav>
             <InputGroup className="mb-3">
@@ -133,34 +165,7 @@ const Layout = ({ children }) => {
               />
             </InputGroup>
 
-            {!user ? (
-              <Nav>
-                <div className="log-wrapper">
-                  <Link href="/login">
-                    <Nav.Link href="#home">Sign in </Nav.Link>
-                  </Link>
-                  <Link href="/signup">
-                    <Nav.Link href="#home">Sign up</Nav.Link>
-                  </Link>
-                </div>
-              </Nav>
-            ) : (
-              <Nav>
-                <div className="log-wrapper">
-                  <Link href="/profile">
-                    <Nav.Link href="#home">Profil</Nav.Link>
-                  </Link>
-
-                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                  <Link href="/">
-                    <Nav.Link onClick={handleLogout} href="#home">
-                      {" "}
-                      Logout
-                    </Nav.Link>
-                  </Link>
-                </div>
-              </Nav>
-            )}
+            {!loading && nav}
           </Container>
         </Navbar>
       </>

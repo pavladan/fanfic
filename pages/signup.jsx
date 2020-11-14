@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import Router from 'next/router';
-import { useUser } from '../lib/hooks';
-import axios from 'axios';
-import { Button, Form } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import Head from "next/head";
+import Router from "next/router";
+import { useUser } from "../lib/hooks";
+import axios from "axios";
+import { Button, Form } from "react-bootstrap";
 
 const SignupPage = () => {
-  const [user,  mutate ] = useUser();
-  const [errorMsg, setErrorMsg] = useState('');
+  const { user, mutate } = useUser();
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    if (user) Router.replace('/');
+    if (user) Router.replace("/");
   }, [user]);
 
   const handleSubmit = async (e) => {
@@ -29,7 +29,6 @@ const SignupPage = () => {
     } catch (err) {
       setErrorMsg(err.response.data);
     }
-
   };
 
   return (
@@ -38,33 +37,41 @@ const SignupPage = () => {
         <title>Sign up</title>
       </Head>
       <div className="forms-wrapper">
-        <Form onSubmit={handleSubmit} >
-          {errorMsg ? <p style={{ color: 'red' }}>{errorMsg}</p> : null}
+        <Form onSubmit={handleSubmit}>
+          {errorMsg ? <p style={{ color: "red" }}>{errorMsg}</p> : null}
           <Form.Group>
             <Form.Label>Name</Form.Label>
-            <Form.Control id="name"
+            <Form.Control
+              id="name"
               name="name"
               type="text"
-              placeholder="Your name" />
+              placeholder="Your name"
+            />
           </Form.Group>
 
           <Form.Group>
             <Form.Label>Email</Form.Label>
-            <Form.Control id="email"
+            <Form.Control
+              id="email"
               name="email"
               type="email"
-              placeholder="Email address" />
+              placeholder="Email address"
+            />
           </Form.Group>
 
           <Form.Group>
             <Form.Label>Password</Form.Label>
-            <Form.Control id="password"
+            <Form.Control
+              id="password"
               name="password"
               type="password"
-              placeholder="Create a password" />
+              placeholder="Create a password"
+            />
           </Form.Group>
 
-          <Button variant="primary" type="submit">Sign Up</Button>
+          <Button variant="primary" type="submit">
+            Sign Up
+          </Button>
         </Form>
       </div>
     </>

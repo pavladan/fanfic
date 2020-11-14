@@ -3,6 +3,7 @@ import { Form, Col, Button, Row, Tabs, Tab } from "react-bootstrap";
 import axios from "axios";
 import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
+import Loader from '../../components/loader'
 
 const genre = [
   "Hurt",
@@ -79,7 +80,8 @@ const Post = () => {
       description: descriptionForm,
       genres: selectedGenres,
       text: textForm,
-    };
+		};
+		setLoading(true)
     try {
       let res;
       if (postId) {
@@ -88,13 +90,16 @@ const Post = () => {
         res = await axios.post("/api/user/posts", body);
       }
       if (res.status === 201) {
-        router.replace('/profile');
+        await router.replace('/profile');
       }
     } catch (err) {
-      setErrorMsg(err.response.data);
-    }
+			setErrorMsg(err.response.data);
+			setLoading(false)
+		}
 	};
-	
+	if(loading){
+		return <Loader />
+	}
   return (
     <div className="forms-wrapper">
       <Form onSubmit={handleSubmitFanFic}>

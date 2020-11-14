@@ -10,24 +10,28 @@ import {
   Form,
 } from "react-bootstrap";
 import axios from "axios";
+import Loader from "../../components/loader";
 
 const ProfilePage = () => {
-  const [user] = useUser();
-  const [posts, mutatePosts] = useUserPosts();
+  const {user} = useUser();
+  const {posts, mutate:mutatePosts, loading:loadingPosts} = useUserPosts();
   const [checkedPosts, setCheckedPosts] = useState([]);
   const { name, email, bio, profilePicture } = user || {};
-
-  if (!user || !posts) {
-    return <p>loading</p>;
-  }
+  const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
+    setLoading(true);
     const res = await axios.delete("/api/user/posts", {
       data: { id: checkedPosts },
     });
     await mutatePosts(res.posts);
     setCheckedPosts([]);
+    setLoading(false);
   };
+
+  if (loadingPosts || loading) {
+    return <Loader />;
+  }
   return (
     <>
       <style jsx>

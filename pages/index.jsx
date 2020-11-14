@@ -1,8 +1,13 @@
 import React from 'react';
 import { useUser } from '../lib/hooks';
+import Loader from '../components/loader'
 
 const IndexPage = () => {
-  const [user] = useUser();
+	const {user,loading} = useUser();
+
+	if (loading){
+		return <Loader/>
+	}
 
   return (
     <>
