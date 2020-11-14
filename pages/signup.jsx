@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
-import Router from "next/router";
 import { useUser } from "../lib/hooks";
 import axios from "axios";
 import { Button, Form } from "react-bootstrap";
+import Loader from "../components/loader";
 
 const SignupPage = () => {
-  const { user, mutate } = useUser();
+  const { mutate } = useUser();
   const [errorMsg, setErrorMsg] = useState("");
-
-  useEffect(() => {
-    if (user) Router.replace("/");
-  }, [user]);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,17 +17,22 @@ const SignupPage = () => {
       name: e.currentTarget.name.value,
       password: e.currentTarget.password.value,
     };
+		setLoading(true);
     try {
       const res = await axios.post("/api/users", body);
       if (res.status === 201) {
         const userObj = await res.data.user;
-        mutate(userObj);
+        await mutate(userObj);
       }
     } catch (err) {
+			setLoading(false);
       setErrorMsg(err.response.data);
-    }
-  };
-
+		}
+	};
+	
+	if (loading) {
+    return <Loader />;
+  }
   return (
     <>
       <Head>

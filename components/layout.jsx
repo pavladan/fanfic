@@ -21,8 +21,8 @@ const Layout = ({ children }) => {
     await fetch("/api/auth", {
       method: "DELETE",
     });
-    mutate(null);
     setLoading(false);
+    mutate(null);
   };
   const nav = !user ? (
     <Nav>
@@ -165,7 +165,7 @@ const Layout = ({ children }) => {
               />
             </InputGroup>
 
-            {!loading && nav}
+            {nav}
           </Container>
         </Navbar>
       </>

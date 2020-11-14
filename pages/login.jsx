@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useUser } from "../lib/hooks";
 import { Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Loader from "../components/loader";
 
 const LoginPage = () => {
-  const router = useRouter();
   const [errorMsg, setErrorMsg] = useState("");
-  const {user, mutate} = useUser();
+  const { mutate} = useUser();
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (user) router.replace("/");
-  }, [user]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -30,11 +24,11 @@ const LoginPage = () => {
     });
     if (res.status === 200) {
       const userObj = await res.json();
-      mutate(userObj);
+      await mutate(userObj);
     } else {
-      setErrorMsg("Incorrect username or password. Try again!");
+			setLoading(false);
+			setErrorMsg("Incorrect username or password. Try again!");
     }
-    setLoading(false);
   }
   if (loading) {
     return <Loader />;
