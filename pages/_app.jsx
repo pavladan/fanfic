@@ -23,8 +23,8 @@ export default function MyApp({ Component, pageProps }) {
   };
 
   useEffect(() => {
-    redirectFromBlockPage();
-  }, [user, router.route]);
+    !loading && redirectFromBlockPage();
+  }, [user, router.route,loading]);
 
   const head = (
     <Head>
