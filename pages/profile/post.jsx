@@ -3,7 +3,8 @@ import { Form, Col, Button, Row, Tabs, Tab } from "react-bootstrap";
 import axios from "axios";
 import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
-import Loader from '../../components/loader'
+import Loader from "../../components/loader";
+import { getUrlFromDropFile } from "../../lib/helpers";
 
 const genre = [
   "Hurt",
@@ -64,8 +65,8 @@ const Post = () => {
           setLoading(false);
         })
         .catch(() => {
-					setLoading(false);
-					router.replace(router.pathname)
+          setLoading(false);
+          router.replace(router.pathname);
         });
     }
   }, [postId]);
@@ -80,8 +81,8 @@ const Post = () => {
       description: descriptionForm,
       genres: selectedGenres,
       text: textForm,
-		};
-		setLoading(true)
+    };
+    setLoading(true);
     try {
       let res;
       if (postId) {
@@ -90,16 +91,34 @@ const Post = () => {
         res = await axios.post("/api/user/posts", body);
       }
       if (res.status === 201) {
-        await router.replace('/profile');
+        await router.replace("/profile");
       }
     } catch (err) {
-			setErrorMsg(err.response.data);
-			setLoading(false)
-		}
-	};
-	if(loading){
-		return <Loader />
-	}
+      setErrorMsg(err.response.data);
+      setLoading(false);
+    }
+  };
+
+  const handleDrop = (dataTransfer, cursorPosition = textForm.length) => {
+    const uploadingText = "\n![Uploading....]()\n";
+    setTextForm(
+      (old) =>
+        old.substring(0, cursorPosition) +
+        uploadingText +
+        old.substring(cursorPosition)
+    );
+    getUrlFromDropFile(dataTransfer)
+      .then((url) => {
+        setTextForm((old) => old.replace(uploadingText, url));
+      })
+      .catch(() => {
+        setTextForm((old) => old.replace(uploadingText, ''));
+			});
+  };
+
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <div className="forms-wrapper">
       <Form onSubmit={handleSubmitFanFic}>
@@ -164,6 +183,11 @@ const Post = () => {
                 value={textForm}
                 onChange={(e) => setTextForm(e.currentTarget.value)}
                 required
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const cursorPosition = e.currentTarget.selectionStart;
+                  handleDrop(e.dataTransfer, cursorPosition);
+                }}
               />
             </Tab>
             <Tab eventKey="Preview" title="Preview">
