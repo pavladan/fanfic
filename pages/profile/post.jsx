@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import ReactMarkdown from "react-markdown";
 import Loader from "../../components/loader";
 import { getUrlFromDropFile } from "../../lib/helpers";
+import TableOfContents from "../../components/tableOfContents";
+import { useRef } from "react";
 
 const genre = [
   "Hurt",
@@ -39,6 +41,7 @@ const Post = () => {
 
   const router = useRouter();
   const postId = router.query.id;
+  const textFormRef = useRef();
 
   useEffect(() => {
     if (postId) {
@@ -112,8 +115,16 @@ const Post = () => {
         setTextForm((old) => old.replace(uploadingText, url));
       })
       .catch(() => {
-        setTextForm((old) => old.replace(uploadingText, ''));
-			});
+        setTextForm((old) => old.replace(uploadingText, ""));
+      });
+  };
+
+  const setTextSelectionRange = (startIndex,endIndex) => {
+    if (textFormRef && textFormRef.current) {
+			textFormRef.current.blur()
+			textFormRef.current.setSelectionRange(startIndex,endIndex)
+			textFormRef.current.focus()
+    }
   };
 
   if (loading) {
@@ -172,28 +183,42 @@ const Post = () => {
             ))}
           </Col>
         </Form.Group>
-        <Form.Group controlId="exampleForm.Text">
-          <Form.Label>Text</Form.Label>
-          <Tabs defaultActiveKey="Write">
-            <Tab eventKey="Write" title="Write">
-              <Form.Control
-                as="textarea"
-                rows={5}
-                placeholder="Text"
-                value={textForm}
-                onChange={(e) => setTextForm(e.currentTarget.value)}
-                required
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const cursorPosition = e.currentTarget.selectionStart;
-                  handleDrop(e.dataTransfer, cursorPosition);
-                }}
-              />
-            </Tab>
-            <Tab eventKey="Preview" title="Preview">
-              <ReactMarkdown>{textForm || "Nothing to preview"}</ReactMarkdown>
-            </Tab>
-          </Tabs>
+        <Form.Group controlId="exampleForm.Text" as={Row}>
+				<Col>
+            <TableOfContents
+              content={textForm}
+              setContent={setTextForm}
+              setSelectionRange={setTextSelectionRange}
+            />
+          </Col>
+          <Col>
+            <Form.Label>Text</Form.Label>
+            <Tabs defaultActiveKey="Write">
+              <Tab eventKey="Write" title="Write">
+                <Form.Control
+                  as="textarea"
+                  rows={10}
+                  placeholder="Text"
+                  value={textForm}
+                  onChange={(e) => {
+                    setTextForm(e.currentTarget.value);
+                  }}
+                  required
+                  ref={textFormRef}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const cursorPosition = e.currentTarget.selectionStart;
+                    handleDrop(e.dataTransfer, cursorPosition);
+                  }}
+                />
+              </Tab>
+              <Tab eventKey="Preview" title="Preview">
+                <ReactMarkdown>
+                  {textForm || "Nothing to preview"}
+                </ReactMarkdown>
+              </Tab>
+            </Tabs>
+          </Col>
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit
