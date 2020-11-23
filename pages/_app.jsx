@@ -1,3 +1,4 @@
+
 import React from "react";
 import Head from "next/head";
 import Layout from "../components/layout";
@@ -10,8 +11,8 @@ export const UserContext = React.createContext({});
 
 export default function MyApp({ Component, pageProps }) {
   const { user, mutate, loading } = useUserSWR();
-	const router = useRouter();
-	
+  const router = useRouter();
+
   const redirectFromBlockPage = async () => {
     const isAuth = !!user;
     const { route } = router;
@@ -24,7 +25,7 @@ export default function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     !loading && redirectFromBlockPage();
-  }, [user, router.route,loading]);
+  }, [user, router.route, loading]);
 
   const head = (
     <Head>

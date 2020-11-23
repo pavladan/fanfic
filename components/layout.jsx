@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useUser } from "../lib/hooks";
 import {
   Navbar,
   Container,
@@ -9,49 +10,15 @@ import {
   FormControl,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useUser } from "../lib/hooks";
 
 const Layout = ({ children }) => {
-	const { user, mutate } = useUser();
-
-  const [loading, setLoading] = useState(false);
-
+  const { user, mutate } = useUser();
   const handleLogout = async () => {
-    setLoading(true);
     await fetch("/api/auth", {
       method: "DELETE",
     });
-    setLoading(false);
     mutate(null);
   };
-  const nav = !user ? (
-    <Nav>
-      <div className="log-wrapper">
-        <Link href="/login">
-          <Nav.Link href="#home">Sign in </Nav.Link>
-        </Link>
-        <Link href="/signup">
-          <Nav.Link href="#home">Sign up</Nav.Link>
-        </Link>
-      </div>
-    </Nav>
-  ) : (
-    <Nav>
-      <div className="log-wrapper">
-        <Link href="/profile">
-          <Nav.Link href="#home">Profil</Nav.Link>
-        </Link>
-
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <Link href="/">
-          <Nav.Link onClick={handleLogout} href="#home">
-            {" "}
-            Logout
-          </Nav.Link>
-        </Link>
-      </div>
-    </Nav>
-  );
   return (
     <>
       <style jsx global>
@@ -60,33 +27,6 @@ const Layout = ({ children }) => {
             color: #333;
             text-align: center;
           }
-          //   label {
-          //     display: flex;
-          //     margin-bottom: 0.5rem;
-          //     align-items: center;
-          //     width: 100%;
-          //   }
-          //   form {
-          //     margin-bottom: 0.5rem;
-          //     display: flex;
-          //     flex-direction: column;
-          //     justify-content: center;
-          //     align-items: center;
-          //   }
-          //   input,
-          //   textarea {
-          //     font-family: monospace;
-          //     flex: 1 1 0%;
-          //     margin-left: 0.5rem;
-          //     box-shadow: none;
-          //     width: 100%;
-          //     color: #000;
-          //     background-color: transparent;
-          //     border: 1px solid #d8d8d8;
-          //     border-radius: 5px;
-          //     outline: 0px;
-          //     padding: 10px 25px;
-          //   }
           button {
             display: block;
             margin-bottom: 0.5rem;
@@ -117,19 +57,40 @@ const Layout = ({ children }) => {
             width: 40%;
             margin-bottom: 0 !important;
           }
-          //   .form-control{
-          //     border:none;
-          //     border-radius: .25rem;
-          //     max-width: 400px;
-          //     text-align:center;
-          //   }
+
           .navbar {
             margin-bottom: 1rem;
           }
+
+          @media (min-width: 768px){
+            .container{
+
+              max-width:100% !important;
+            }
+            .log-wrapper{
+              min-width:200px;
+              justify-content:space-between;
+            }
+          
+
+          }
+          @media (max-width: 768px){
+            #pages-elements{
+              width:80%;
+              margin-left:auto;
+              margin-right:auto;
+            }
+            .log-wrapper{
+              justify-content:space-between;
+            }
+
+          }
+        
         `}
       </style>
       <>
         <Head>
+          <title>Next.js + MongoDB App</title>
           <meta
             key="viewport"
             name="viewport"
@@ -154,7 +115,7 @@ const Layout = ({ children }) => {
           <Container>
             <Nav id="responsive-navbar-nav">
               <Link href="/">
-                <Nav.Link href="#home">FAnfiK</Nav.Link>
+                <Nav.Link href="#home">Next.js + MongoDB App</Nav.Link>
               </Link>
             </Nav>
             <InputGroup className="mb-3">
@@ -165,14 +126,48 @@ const Layout = ({ children }) => {
               />
             </InputGroup>
 
-            {nav}
+            {!user ? (
+              <Nav>
+                <div className="log-wrapper">
+                  <Link href="/login">
+                    <Nav.Link href="#home">Sign in </Nav.Link>
+                  </Link>
+                  <Link href="/signup">
+                    <Nav.Link href="#home">Sign up</Nav.Link>
+                  </Link>
+                </div>
+              </Nav>
+            ) : (
+                <Nav id="pages-elements">
+                  <div className="log-wrapper">
+                    <Link href="/profile">
+                      <Nav.Link href="#home">Profil</Nav.Link>
+                    </Link>
+                    {user.isAdmin ? (
+                      <Link href="/adminPage">
+                        <Nav.Link href="#home">Admin Page</Nav.Link>
+                      </Link>
+                    ):null
+
+                    }
+
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                    <Link href="/">
+                      <Nav.Link onClick={handleLogout} href="#home">
+                        {" "}
+                      Logout
+                    </Nav.Link>
+                    </Link>
+                  </div>
+                </Nav>
+              )}
           </Container>
         </Navbar>
       </>
-
       <main>{children}</main>
       <footer></footer>
     </>
   );
-};
+}
+
 export default Layout;

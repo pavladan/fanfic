@@ -8,6 +8,7 @@ import Loader from "../components/loader";
 const SignupPage = () => {
   const { mutate } = useUser();
   const [errorMsg, setErrorMsg] = useState("");
+  
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -16,6 +17,7 @@ const SignupPage = () => {
       email: e.currentTarget.email.value,
       name: e.currentTarget.name.value,
       password: e.currentTarget.password.value,
+
     };
 		setLoading(true);
     try {
@@ -79,5 +81,4 @@ const SignupPage = () => {
     </>
   );
 };
-
 export default SignupPage;
