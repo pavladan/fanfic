@@ -95,12 +95,12 @@ export function usePostPages({ creatorId } = {}) {
     });
 }
 
-export default function Posts({ creatorId }) {
+export default function Posts({ creatorId,findedPosts }) {
     const {
         data, error, size, setSize,
     } = usePostPages({ creatorId });
 
-    const posts = data ? data.reduce((acc, val) => [...acc, ...val.posts], []) : [];
+    const posts = findedPosts || (data ? data.reduce((acc, val) => [...acc, ...val.posts], []) : []);
     // const isLoadingInitialData = !data && !error;
     // const isLoadingMore = isLoadingInitialData || (data && typeof data[size - 1] === 'undefined');
     // const isEmpty = data?.[0].posts?.length === 0;
