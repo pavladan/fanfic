@@ -101,7 +101,7 @@ const ProfilePage = () => {
       <div>
         <ButtonToolbar aria-label="Toolbar with button groups">
           <ButtonGroup className="mr-2" aria-label="First group">
-            <Link href="/profile/post">
+            <Link href={"/profile/post?userId=" +routerUser._id}>
               <Button>Create new element</Button>
             </Link>
             <Button
